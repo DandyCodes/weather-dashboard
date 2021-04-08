@@ -8,6 +8,15 @@ body {
     margin: 0;
 }
 
+img {
+    width: 4rem;
+}
+
+p {
+    margin: 0;
+    padding: 0.25rem;
+}
+
 /*
 HEADER
 */
@@ -52,15 +61,16 @@ button, input {
 
 /* data section */
 #current-data {
-    padding-left: 1rem;
+    padding: 0rem 0rem 1rem 1rem;
+    background-color: skyblue;
     border: thin black solid;
     min-height: 10rem;
 }
 
-#city {
-    display: flex;
-    align-items: center;
-    margin: 0;
+.city, .date {
+    line-height: 4rem;
+    vertical-align: top;
+    font-size: 2rem;
 }
 
 #forecast-container {
@@ -71,9 +81,13 @@ button, input {
 
 .card {
     color: white;
-    padding: 0rem 1rem;
     background-color: rgb(45, 57, 68);
+    padding: 0.25rem;
     margin: 0.25rem;
+}
+
+.card img {
+    display: block;
 }
 
 .uv-index {
