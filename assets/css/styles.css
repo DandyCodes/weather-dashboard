@@ -38,7 +38,7 @@ main {
     flex-direction: column;
 }
 
-#search-box {
+#search-div {
     display: flex;
     flex-direction: column;
     padding-bottom: 1rem;
@@ -73,7 +73,7 @@ button, input {
     color: white;
     padding: 0rem 1rem;
     background-color: rgb(45, 57, 68);
-    margin: 1rem;
+    margin: 0.25rem;
 }
 
 .uv-index {
