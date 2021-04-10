@@ -35,7 +35,6 @@ function getCityDataAndUpdateUI() {
 }
 
 function updateUI(cityData) {
-    console.log(cityData);
     const dataSection = document.querySelector('#data-section');
     dataSection.removeAttribute('hidden');
     updateCurrentData();
@@ -52,6 +51,8 @@ function updateUI(cityData) {
         date.textContent = ` (${moment().format('MMM D, YYYY')})`;
         const img = currentDataDiv.querySelector('img');
         img.src = getWeatherIcon(cityData.current.weather[0].icon);
+        img.alt = cityData.current.weather[0].description;
+        img.title = cityData.current.weather[0].description;
         const temp = currentDataDiv.querySelector('.temp');
         temp.textContent = cityData.current.temp + " °C";
         const wind = currentDataDiv.querySelector('.wind');
@@ -67,6 +68,8 @@ function updateUI(cityData) {
         date.textContent = moment().add(index + 1, "days").format('MMM D, YYYY');
         const img = div.querySelector('img');
         img.src = getWeatherIcon(data.daily[index].weather[0].icon);
+        img.alt = data.daily[index].weather[0].description;
+        img.title = data.daily[index].weather[0].description;
         const temp = div.querySelector('.temp');
         temp.textContent = data.daily[index].temp.max + " °C";
         const wind = div.querySelector('.wind');
