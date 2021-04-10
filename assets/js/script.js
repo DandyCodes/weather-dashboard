@@ -28,14 +28,14 @@ function getCityDataAndUpdateUI() {
         fetch(oneCallURL).then(response => {
             return response.json();
         }).then(oneCallCityData => {
-            updateUI(oneCallCityData);
+            updateCurrentAndForecastData(oneCallCityData);
         })
     }).catch(error => {
         alert(error);
     });
 }
 
-function updateUI(cityData) {
+function updateCurrentAndForecastData(cityData) {
     const dataSection = document.querySelector('#data-section');
     dataSection.removeAttribute('hidden');
     updateCurrentData(cityData);
