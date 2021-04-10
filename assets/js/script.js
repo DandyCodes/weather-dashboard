@@ -21,7 +21,7 @@ function getCityDataAndUpdateUI() {
         const latitude = currentCityData.coord.lat;
         const longitude = currentCityData.coord.lon;
         const oneCallURL = `https://api.openweathermap.org/data/2.5/onecall`
-            + `?lat=${latitude}&lon=${longitude}&units=imperial&appid=${apiKey}`;
+            + `?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
         return oneCallURL;
     }).then(oneCallURL => {
         fetch(oneCallURL).then(response => {
@@ -36,32 +36,44 @@ function getCityDataAndUpdateUI() {
 
 function updateUI(cityData) {
     console.log(cityData);
-    const currentDataDiv = document.querySelector('#current-data');
-    const city = currentDataDiv.querySelector('.city');
-    city.textContent = cityData.timezone.split('/')[1];
-    const date = currentDataDiv.querySelector('.date');
-    date.textContent = ` (${moment().format('MMM D, YYYY')})`;
-    const uvIndex = currentDataDiv.querySelector('.uv-index');
-    uvIndex.textContent = cityData.current.uvi;
-    const temp = currentDataDiv.querySelector('.temp');
-    temp.textContent = cityData.current.temp + " °F";
-    const wind = currentDataDiv.querySelector('.wind');
-    wind.textContent = cityData.current.wind_speed + " MPH"
-    const humidity = currentDataDiv.querySelector('.humidity');
-    humidity.textContent = cityData.current.humidity + " %";
+    updateCurrentData();
     const cards = document.querySelectorAll('.card');
     cards.forEach((card, index) => {
         updateCard(card, cityData, index);
     });
+
+    function updateCurrentData() {
+        const currentDataDiv = document.querySelector('#current-data');
+        const city = currentDataDiv.querySelector('.city');
+        city.textContent = cityData.timezone.split('/')[1];
+        const date = currentDataDiv.querySelector('.date');
+        date.textContent = ` (${moment().format('MMM D, YYYY')})`;
+        const img = currentDataDiv.querySelector('img');
+        img.src = getWeatherIcon(cityData.current.weather[0].icon);
+        const temp = currentDataDiv.querySelector('.temp');
+        temp.textContent = cityData.current.temp + " °C";
+        const wind = currentDataDiv.querySelector('.wind');
+        wind.textContent = cityData.current.wind_speed + " km/h";
+        const humidity = currentDataDiv.querySelector('.humidity');
+        humidity.textContent = cityData.current.humidity + " %";
+        const uvIndex = currentDataDiv.querySelector('.uv-index');
+        uvIndex.textContent = cityData.current.uvi;
+    }
+
+    function updateCard(div, data, index) {
+        const date = div.querySelector('.date');
+        date.textContent = moment().add(index + 1, "days").format('MMM D, YYYY');
+        const img = div.querySelector('img');
+        img.src = getWeatherIcon(data.daily[index].weather[0].icon);
+        const temp = div.querySelector('.temp');
+        temp.textContent = data.daily[index].temp.max + " °C";
+        const wind = div.querySelector('.wind');
+        wind.textContent = data.daily[index].wind_speed + " km/h"
+        const humidity = div.querySelector('.humidity');
+        humidity.textContent = data.daily[index].humidity + " %";
+    }
 }
 
-function updateCard(div, data, index) {
-    const date = div.querySelector('.date');
-    date.textContent = moment().add(index + 1, "days").format('MMM D, YYYY');
-    const temp = div.querySelector('.temp');
-    temp.textContent = data.daily[index].temp.max + " °F";
-    const wind = div.querySelector('.wind');
-    wind.textContent = data.daily[index].wind_speed + " MPH"
-    const humidity = div.querySelector('.humidity');
-    humidity.textContent = data.daily[index].humidity + " %";
+function getWeatherIcon(icon) {
+    return `http://openweathermap.org/img/wn/${icon}@2x.png`;
 }
