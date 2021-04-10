@@ -36,6 +36,8 @@ function getCityDataAndUpdateUI() {
 
 function updateUI(cityData) {
     console.log(cityData);
+    const dataSection = document.querySelector('#data-section');
+    dataSection.removeAttribute('hidden');
     updateCurrentData();
     const cards = document.querySelectorAll('.card');
     cards.forEach((card, index) => {
