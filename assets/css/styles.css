@@ -68,7 +68,6 @@ button, input {
 }
 
 #current-data .city, #current-data .date {
-
     line-height: 4rem;
     vertical-align: top;
     font-size: 2rem;

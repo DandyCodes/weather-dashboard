@@ -35,18 +35,33 @@ function getCityDataAndUpdateUI() {
 }
 
 function updateUI(cityData) {
+    console.log(cityData);
     const dataSection = document.querySelector('#data-section');
     dataSection.removeAttribute('hidden');
-    updateCurrentData();
+    updateCurrentData(cityData);
     const cards = document.querySelectorAll('.card');
     cards.forEach((card, index) => {
         updateCard(card, cityData, index);
     });
+    const searchSection = document.querySelector('#search-section');
+    const historicalSearches = searchSection.querySelectorAll('button');
+    const cityName = cityData.timezone.split('/')[1].replace("_", " ");
+    let alreadySearched = false;
+    Array.from(historicalSearches).forEach(button => {
+        if (button.textContent === cityName){
+            alreadySearched = true;
+        }
+    });
+    if (alreadySearched) return;
+    const historyButton = document.createElement('button');
+    historyButton.textContent = cityData.timezone.split('/')[1].replace("_", " ");
+    historyButton.onclick = historicalSearch;
+    searchSection.append(historyButton);
 
-    function updateCurrentData() {
+    function updateCurrentData(cityData) {
         const currentDataDiv = document.querySelector('#current-data');
         const city = currentDataDiv.querySelector('.city');
-        city.textContent = cityData.timezone.split('/')[1];
+        city.textContent = cityData.timezone.split('/')[1].replace("_", " ");
         const date = currentDataDiv.querySelector('.date');
         date.textContent = ` (${moment().format('MMM D, YYYY')})`;
         const img = currentDataDiv.querySelector('img');
@@ -81,4 +96,10 @@ function updateUI(cityData) {
 
 function getWeatherIcon(icon) {
     return `http://openweathermap.org/img/wn/${icon}@2x.png`;
+}
+
+function historicalSearch(event) {
+    const input = document.querySelector('input');
+    input.value = event.target.textContent;
+    getCityDataAndUpdateUI();
 }
