@@ -3,6 +3,7 @@ init();
 function init() {
     const searchButton = document.querySelector('button');
     searchButton.onclick = getCityDataAndUpdateUI;
+    loadHistoricalSearches();
 }
 
 function getCityDataAndUpdateUI() {
@@ -35,7 +36,6 @@ function getCityDataAndUpdateUI() {
 }
 
 function updateUI(cityData) {
-    console.log(cityData);
     const dataSection = document.querySelector('#data-section');
     dataSection.removeAttribute('hidden');
     updateCurrentData(cityData);
@@ -44,19 +44,23 @@ function updateUI(cityData) {
         updateCard(card, cityData, index);
     });
     const searchSection = document.querySelector('#search-section');
-    const historicalSearches = searchSection.querySelectorAll('button');
+    const historicalSearchButtons = searchSection.querySelectorAll('button');
     const cityName = cityData.timezone.split('/')[1].replace("_", " ");
-    let alreadySearched = false;
-    Array.from(historicalSearches).forEach(button => {
-        if (button.textContent === cityName){
-            alreadySearched = true;
+    let historicalSearches = [];
+    Array.from(historicalSearchButtons).forEach(button => {
+        if (button.textContent === "Search") {
+            return;
         }
+        historicalSearches.push(button.textContent);
     });
-    if (alreadySearched) return;
+    if (historicalSearches.includes(cityName)) return;
+    historicalSearches.push(cityName);
+    localStorage.setItem('historicalSearches', JSON.stringify(historicalSearches));
     const historyButton = document.createElement('button');
     historyButton.textContent = cityData.timezone.split('/')[1].replace("_", " ");
     historyButton.onclick = historicalSearch;
     searchSection.append(historyButton);
+    
 
     function updateCurrentData(cityData) {
         const currentDataDiv = document.querySelector('#current-data');
@@ -74,8 +78,16 @@ function updateUI(cityData) {
         wind.textContent = cityData.current.wind_speed + " km/h";
         const humidity = currentDataDiv.querySelector('.humidity');
         humidity.textContent = cityData.current.humidity + " %";
-        const uvIndex = currentDataDiv.querySelector('.uv-index');
-        uvIndex.textContent = cityData.current.uvi;
+        const uvIndexSpan = currentDataDiv.querySelector('.uv-index');
+        const uvIndex = cityData.current.uvi;
+        uvIndexSpan.textContent = uvIndex;
+        uvIndexSpan.style.backgroundColor = "green";
+        if (uvIndex > 2) {
+            uvIndexSpan.style.backgroundColor = "orange";
+        }
+        if (uvIndex > 5) {
+            uvIndexSpan.style.backgroundColor = "red";
+        }
     }
 
     function updateCard(div, data, index) {
@@ -102,4 +114,17 @@ function historicalSearch(event) {
     const input = document.querySelector('input');
     input.value = event.target.textContent;
     getCityDataAndUpdateUI();
+}
+
+function loadHistoricalSearches() {
+    const historicalSearches = JSON.parse(localStorage.getItem('historicalSearches'));
+    if (!historicalSearches) return;
+    console.log(historicalSearches);
+    const searchSection = document.querySelector('#search-section');
+    historicalSearches.forEach(search => {
+        const newButton = document.createElement('button');
+        newButton.textContent = search;
+        newButton.onclick = historicalSearch;
+        searchSection.append(newButton);
+    });
 }
