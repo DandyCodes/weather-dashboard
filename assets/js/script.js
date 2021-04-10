@@ -119,7 +119,6 @@ function historicalSearch(event) {
 function loadHistoricalSearches() {
     const historicalSearches = JSON.parse(localStorage.getItem('historicalSearches'));
     if (!historicalSearches) return;
-    console.log(historicalSearches);
     const searchSection = document.querySelector('#search-section');
     historicalSearches.forEach(search => {
         const newButton = document.createElement('button');
