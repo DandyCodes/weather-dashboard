@@ -82,10 +82,10 @@ function updateCurrentAndForecastData(cityData) {
         const uvIndex = cityData.current.uvi;
         uvIndexSpan.textContent = uvIndex;
         uvIndexSpan.style.backgroundColor = "green";
-        if (uvIndex > 2) {
+        if (uvIndex >= 3) {
             uvIndexSpan.style.backgroundColor = "orange";
         }
-        if (uvIndex > 5) {
+        if (uvIndex >= 6) {
             uvIndexSpan.style.backgroundColor = "red";
         }
     }
