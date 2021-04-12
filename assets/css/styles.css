@@ -17,6 +17,17 @@ p {
     padding: 0.25rem;
 }
 
+button, input {
+    font-size: 1rem;
+    padding: 0.5rem;
+    margin: 0.25rem;
+}
+
+button{
+    border-radius: 0.25rem;
+    border: 0;
+}
+
 /*
 HEADER
 */
@@ -54,9 +65,9 @@ main {
     border-bottom: 2px gray solid;
 }
 
-button, input {
-    margin: 0.25rem;
-    padding: 0.25rem;
+#search-button {
+    background-color: steelblue;
+    color: white;
 }
 
 /* data section */
