@@ -1,15 +1,33 @@
 init();
 
 function init() {
-    const searchButton = document.querySelector('button');
-    searchButton.onclick = getCityDataAndUpdateUI;
-    loadHistoricalSearches();
+    displaySearches(getSearches());
+    document.querySelector('#search-button').onclick = searchForCity;
 }
 
-function getCityDataAndUpdateUI() {
-    const input = document.querySelector('input');
-    if (!input.value) return;
-    const city = input.value;
+function getSearches() {
+    const searches = JSON.parse(localStorage.getItem('searches'));
+    return searches ? searches : [];
+}
+
+function displaySearches(searches) {
+    const searchHistory = document.querySelector('#search-history');
+    searchHistory.innerHTML = '';
+    searches.forEach(search => {
+        const button = document.createElement('button');
+        button.textContent = search;
+        button.onclick = event => {
+            const input = document.querySelector('#search-input');
+            input.value = event.target.textContent;
+            searchForCity();
+        };
+        searchHistory.append(button);
+    });
+}
+
+function searchForCity() {
+    const city = document.querySelector('#search-input').value;
+    if (!city) return;
     const apiKey = "f9dfa73107d68617b635406533045a9b";
     const currentURL = `https://api.openweathermap.org/data/2.5/weather`
         + `?q=${city}&appid=${apiKey}`
@@ -19,6 +37,7 @@ function getCityDataAndUpdateUI() {
         }
         return response.json();
     }).then(currentCityData => {
+        document.querySelector('#city').textContent = `${currentCityData.name}: `;
         const latitude = currentCityData.coord.lat;
         const longitude = currentCityData.coord.lon;
         const oneCallURL = `https://api.openweathermap.org/data/2.5/onecall`
@@ -28,102 +47,50 @@ function getCityDataAndUpdateUI() {
         fetch(oneCallURL).then(response => {
             return response.json();
         }).then(oneCallCityData => {
-            updateCurrentAndForecastData(oneCallCityData);
+            updateData(oneCallCityData);
         })
     }).catch(error => {
         alert(error);
     });
 }
 
-function updateCurrentAndForecastData(cityData) {
-    const dataSection = document.querySelector('#data-section');
-    dataSection.removeAttribute('hidden');
-    updateCurrentData(cityData);
-    const cards = document.querySelectorAll('.card');
-    cards.forEach((card, index) => {
-        updateCard(card, cityData, index);
+function updateData(cityData) {
+    document.querySelector('#data-section').removeAttribute('hidden');
+    updateCurrentUVI(cityData.current.uvi);
+    document.querySelectorAll('.card').forEach((card, index) => {
+        const data = index > 0 ? cityData.daily[index] : cityData.current;
+        updateCard(card, data);
     });
-    const searchSection = document.querySelector('#search-section');
-    const historicalSearchButtons = searchSection.querySelectorAll('button');
-    const cityName = cityData.timezone.split('/')[1].replace("_", " ");
-    let historicalSearches = [];
-    Array.from(historicalSearchButtons).forEach(button => {
-        if (button.textContent === "Search") {
-            return;
-        }
-        historicalSearches.push(button.textContent);
-    });
-    if (historicalSearches.includes(cityName)) return;
-    historicalSearches.push(cityName);
-    localStorage.setItem('historicalSearches', JSON.stringify(historicalSearches));
-    const historyButton = document.createElement('button');
-    historyButton.textContent = cityData.timezone.split('/')[1].replace("_", " ");
-    historyButton.onclick = historicalSearch;
-    searchSection.append(historyButton);
-    
-
-    function updateCurrentData(cityData) {
-        const currentDataDiv = document.querySelector('#current-data');
-        const city = currentDataDiv.querySelector('.city');
-        city.textContent = cityData.timezone.split('/')[1].replace("_", " ");
-        const date = currentDataDiv.querySelector('.date');
-        date.textContent = ` (${moment().format('MMM D, YYYY')})`;
-        const img = currentDataDiv.querySelector('img');
-        img.src = getWeatherIcon(cityData.current.weather[0].icon);
-        img.alt = cityData.current.weather[0].description;
-        img.title = cityData.current.weather[0].description;
-        const temp = currentDataDiv.querySelector('.temp');
-        temp.textContent = cityData.current.temp + " °C";
-        const wind = currentDataDiv.querySelector('.wind');
-        wind.textContent = cityData.current.wind_speed + " km/h";
-        const humidity = currentDataDiv.querySelector('.humidity');
-        humidity.textContent = cityData.current.humidity + " %";
-        const uvIndexSpan = currentDataDiv.querySelector('.uv-index');
-        const uvIndex = cityData.current.uvi;
-        uvIndexSpan.textContent = uvIndex;
-        uvIndexSpan.style.backgroundColor = "green";
-        if (uvIndex >= 3) {
-            uvIndexSpan.style.backgroundColor = "orange";
-        }
-        if (uvIndex >= 6) {
-            uvIndexSpan.style.backgroundColor = "red";
-        }
-    }
-
-    function updateCard(div, data, index) {
-        const date = div.querySelector('.date');
-        date.textContent = moment().add(index + 1, "days").format('MMM D, YYYY');
-        const img = div.querySelector('img');
-        img.src = getWeatherIcon(data.daily[index].weather[0].icon);
-        img.alt = data.daily[index].weather[0].description;
-        img.title = data.daily[index].weather[0].description;
-        const temp = div.querySelector('.temp');
-        temp.textContent = data.daily[index].temp.max + " °C";
-        const wind = div.querySelector('.wind');
-        wind.textContent = data.daily[index].wind_speed + " km/h"
-        const humidity = div.querySelector('.humidity');
-        humidity.textContent = data.daily[index].humidity + " %";
-    }
+    updateSearchHistory();
 }
 
-function getWeatherIcon(icon) {
-    return `https://openweathermap.org/img/wn/${icon}@2x.png`;
+function updateCurrentUVI(uvi) {
+    const span = document.querySelector('#uvi');
+    span.textContent = uvi;
+    span.style.backgroundColor = uvi < 3 ? "green" : uvi < 6 ? "orange" : "red";
 }
 
-function historicalSearch(event) {
-    const input = document.querySelector('input');
-    input.value = event.target.textContent;
-    getCityDataAndUpdateUI();
+function updateCard(card, data) {
+    const date = card.querySelector('.date');
+    date.textContent = moment.unix(data.dt).utc().format('MMM D, YYYY');
+    const img = card.querySelector('img');
+    img.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+    img.alt = data.weather[0].description;
+    img.title = data.weather[0].description;
+    const temp = card.querySelector('.temp');
+    temp.textContent = data.temp.max ? data.temp.max : data.temp;
+    temp.textContent += " °C";
+    const wind = card.querySelector('.wind');
+    wind.textContent = data.wind_speed + " km/h"
+    const humidity = card.querySelector('.humidity');
+    humidity.textContent = data.humidity + " %";
 }
 
-function loadHistoricalSearches() {
-    const historicalSearches = JSON.parse(localStorage.getItem('historicalSearches'));
-    if (!historicalSearches) return;
-    const searchSection = document.querySelector('#search-section');
-    historicalSearches.forEach(search => {
-        const newButton = document.createElement('button');
-        newButton.textContent = search;
-        newButton.onclick = historicalSearch;
-        searchSection.append(newButton);
-    });
+function updateSearchHistory() {
+    const searches = getSearches();
+    const city = document.querySelector('#city').textContent.replace(": ", "");
+    if (searches.includes(city)) return;
+    searches.push(city);
+    localStorage.setItem('searches', JSON.stringify(searches));
+    displaySearches(searches);
 }

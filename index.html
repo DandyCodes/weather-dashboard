@@ -16,22 +16,23 @@
     </header>
 
     <main>
-        <section id="search-section">
+        <section>
             <div id="search-div">
-                <h2>Search for a city:</h2>
-                <input type="text" placeholder="San Diego">
+                <h2>Enter city:</h2>
+                <input id="search-input" type="text" placeholder="San Diego">
                 <button id="search-button">Search</button>
             </div>
+            <div id="search-history"></div>
         </section>
 
         <section id="data-section" hidden>
-            <div id="current-data">
-                <span class="city">Atlanta</span><span class="date">:(00/00/0000)</span>
+            <div class="card">
+                <span id="city">Atlanta</span><span class="date">:(00/00/0000)</span>
                 <img src="./assets/img/02d@2x.png">
                 <p>Temp: <span class="temp">00.00°F</span></p>
                 <p>Wind: <span class="wind">00.00 MPH</span></p>
                 <p>Humidity: <span  class="humidity">00 %</span></p>
-                <p>UV Index: <span class="uv-index">0.00</span></p>
+                <p>UV Index: <span id="uvi">0.00</span></p>
             </div>
 
             <h2>5-Day Forecast:</h2>

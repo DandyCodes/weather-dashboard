@@ -32,7 +32,7 @@ button{
 HEADER
 */
 header {
-    background-image: linear-gradient(to right, steelblue, midnightblue);
+    background-image: linear-gradient(to right, lightsteelblue, midnightblue);
 }
 
 header h1 {
@@ -53,7 +53,7 @@ main {
 }
 
 /* search section */
-#search-section {
+#search-history {
     display: flex;
     flex-direction: column;
 }
@@ -66,25 +66,18 @@ main {
 }
 
 #search-button {
-    background-color: steelblue;
+    background-color: midnightblue;
     color: white;
 }
 
 /* data section */
-#current-data {
-    padding: 0rem 0rem 1rem 1rem;
-    background-color: skyblue;
-    border: thin solid black;
-    min-height: 10rem;
-}
-
-#current-data .city, #current-data .date {
+#city, #city + .date {
     line-height: 4rem;
     vertical-align: top;
     font-size: 2rem;
 }
 
-.card .date {
+.date {
     font-size: 1.5rem;
 }
 
@@ -95,17 +88,19 @@ main {
 }
 
 .card {
-    background-color:skyblue;
-    border: thin solid black;
+    background-color:lightsteelblue;
+    border: lightgray solid thin;
     padding: 0.5rem;
     margin: 0.1rem;
+    border-radius: 0.3rem;
+    box-shadow: 2px 3px 2px darkgray;
 }
 
 .card img {
     display: block;
 }
 
-.uv-index {
+#uvi {
     padding: 0.25rem 0.75rem;
     border-radius: 0.25rem;
     color: white;
