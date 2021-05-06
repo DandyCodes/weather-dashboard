@@ -1,19 +1,19 @@
 init();
 
 function init() {
-    displaySearches(getSearches());
+    displayPreviousCitySearches(getPreviousCitySearches());
     document.querySelector('#search-button').onclick = searchForCity;
 }
 
-function getSearches() {
-    const searches = JSON.parse(localStorage.getItem('searches'));
-    return searches ? searches : [];
+function getPreviousCitySearches() {
+    const previousCitySearches = JSON.parse(localStorage.getItem('previousCitySearches'));
+    return previousCitySearches ? previousCitySearches : [];
 }
 
-function displaySearches(searches) {
+function displayPreviousCitySearches(previousCitySearches) {
     const searchHistory = document.querySelector('#search-history');
     searchHistory.innerHTML = '';
-    searches.forEach(search => {
+    previousCitySearches.forEach(search => {
         const button = document.createElement('button');
         button.textContent = search;
         button.onclick = event => {
@@ -87,10 +87,10 @@ function updateCard(card, data) {
 }
 
 function updateSearchHistory() {
-    const searches = getSearches();
+    const previousCitySearches = getPreviousCitySearches();
     const city = document.querySelector('#city').textContent.replace(": ", "");
-    if (searches.includes(city)) return;
-    searches.push(city);
-    localStorage.setItem('searches', JSON.stringify(searches));
-    displaySearches(searches);
+    if (previousCitySearches.includes(city)) return;
+    previousCitySearches.push(city);
+    localStorage.setItem('previousCitySearches', JSON.stringify(previousCitySearches));
+    displayPreviousCitySearches(previousCitySearches);
 }
